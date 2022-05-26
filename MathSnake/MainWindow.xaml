@@ -6,6 +6,22 @@
         xmlns:local="clr-namespace:MathSnake"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
+    <Window.Resources>
+        <Style x:Key="EmptyTile" TargetType="Rectangle">
+            <Setter Property="Stroke" Value="Black"/>
+            <Setter Property="Fill" Value="LawnGreen"/>
+        </Style>
+        <Style x:Key="SnakeHeadTile" TargetType="Rectangle" BasedOn="{StaticResource EmptyTile}">
+            <Setter Property="Fill" Value="Green"/>
+        </Style>
+        <Style x:Key="SnakeBodyTile" TargetType="Rectangle" BasedOn="{StaticResource EmptyTile}">
+            <Setter Property="Fill" Value="ForestGreen"/>
+        </Style>
+        <Style x:Key="SnakeTailTile" TargetType="Rectangle" BasedOn="{StaticResource SnakeBodyTile}"/>
+        <Style x:Key="FoodTile" TargetType="Rectangle" BasedOn="{StaticResource EmptyTile}">
+            <Setter Property="Fill" Value="Red"/>
+        </Style>
+    </Window.Resources>
     <Grid x:Name="AppGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" x:Name="TopBarArea"/>
@@ -34,8 +50,6 @@
             <TextBox x:Name="BuildNumberTextBox" Text="Alpha 0" Grid.Column="0" Grid.Row="0"/>
         </Grid>
         <!--GAME AREA-->
-        <Grid x:Name="GameAreaGrid" Grid.Row="1" Grid.Column="1" Margin="15" Background="AliceBlue">
-            
-        </Grid>
+        <Grid x:Name="GameAreaGrid" Grid.Row="1" Grid.Column="1" Margin="15" Background="AliceBlue"/>
     </Grid>
 </Window>
