@@ -18,10 +18,12 @@ namespace MathSnake
     {
         public string SnakeName;
         public int SnakeLength;
-        public Snake(int snakeLength = 3, string snakeName = "Arnold")
+        public MovementDirection Direction;
+        public Snake(int snakeLength = 3, string snakeName = "Arnold", MovementDirection movementDirection = MovementDirection.Right)
         {
             SnakeLength = snakeLength;
             SnakeName = snakeName;
+            Direction = movementDirection;
         }
         public void GenerateSnake(TileState[,] grid)
         {
@@ -33,6 +35,11 @@ namespace MathSnake
                 grid[rowCount / 2 - i, columnCount / 2] = TileState.SnakeBody;
             }
             grid[rowCount / 2 - SnakeLength, columnCount / 2] = TileState.SnakeTail;
+        }
+
+        public void SnakeMovement(Snake snake, MovementDirection direction)
+        {
+
         }
     }
 }
