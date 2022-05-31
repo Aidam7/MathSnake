@@ -12,7 +12,7 @@
             <Setter Property="Fill" Value="LawnGreen"/>
         </Style>
         <Style x:Key="SnakeHeadTile" TargetType="Rectangle" BasedOn="{StaticResource EmptyTile}">
-            <Setter Property="Fill" Value="Green"/>
+            <Setter Property="Fill" Value="Orange"/>
         </Style>
         <Style x:Key="SnakeBodyTile" TargetType="Rectangle" BasedOn="{StaticResource EmptyTile}">
             <Setter Property="Fill" Value="ForestGreen"/>
