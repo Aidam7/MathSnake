@@ -48,7 +48,7 @@ namespace MathSnake
             }
         }
         /// <summary>
-        /// Refreshes the TileStates on the display
+        /// Refreshes TileStates on the display
         /// </summary>
         /// <param name="display"></param>
         /// <param name="gameArea"></param>
