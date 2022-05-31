@@ -54,7 +54,7 @@ namespace MathSnake
         /// <param name="gameArea"></param>
         private void UpdateTileStates(Grid display, TileState[,] gameArea)
         {
-            _tiles = new Rectangle[_gameSize, _gameSize]; //uložím si mapu, kde který rectangle je
+            _tiles = new Rectangle[_gameSize, _gameSize];
 
             for (int x = 0; x < _gameSize; x++)
             {
@@ -62,7 +62,7 @@ namespace MathSnake
                 {
                     Rectangle tile = new Rectangle();
                     RenderTile(tile, gameArea[x, y]);
-                    _tiles[x, y] = tile; //hráčovu dlaždici si poznačím do mapy
+                    _tiles[x, y] = tile;
                     Grid.SetRow(tile, y);
                     Grid.SetColumn(tile, x);
                     display.Children.Add(tile);
@@ -74,33 +74,38 @@ namespace MathSnake
         /// </summary>
         /// <param name="tile"></param>
         /// <param name="state"></param>
-        //private void InitializeGameArea(Grid display, TileState[,] gameArea)
-        //{
+        private void InitializeGameArea(Grid display, TileState[,] gameArea)
+        {
+            //This method should not be used, instead use the methods separately
+            CreateGrid(display);
+            UpdateTileStates(display, gameArea);
+            #region Merged code of CreateGrid and UpdateTileStates
+            //DO NOT USE
+            //for (int i = 0; i < _gameSize; i++)
+            //{
+            //    display.RowDefinitions.Add(new RowDefinition());
+            //}
+            //for (int i = 0; i < _gameSize; i++)
+            //{
+            //    display.ColumnDefinitions.Add(new ColumnDefinition());
+            //}
 
-        //    for (int i = 0; i < _gameSize; i++)
-        //    {
-        //        display.RowDefinitions.Add(new RowDefinition());
-        //    }
-        //    for (int i = 0; i < _gameSize; i++)
-        //    {
-        //        display.ColumnDefinitions.Add(new ColumnDefinition());
-        //    }
+            //_tiles = new Rectangle[_gameSize, _gameSize]; //uložím si mapu, kde který rectangle je
 
-        //    _tiles = new Rectangle[_gameSize, _gameSize]; //uložím si mapu, kde který rectangle je
-
-        //    for (int x = 0; x < _gameSize; x++)
-        //    {
-        //        for (int y = 0; y < _gameSize; y++)
-        //        {
-        //            Rectangle tile = new Rectangle();
-        //            RenderTile(tile, gameArea[x, y]);
-        //            _tiles[x, y] = tile; //hráčovu dlaždici si poznačím do mapy
-        //            Grid.SetRow(tile, y);
-        //            Grid.SetColumn(tile, x);
-        //            display.Children.Add(tile);
-        //        }
-        //    }
-        //}
+            //for (int x = 0; x < _gameSize; x++)
+            //{
+            //    for (int y = 0; y < _gameSize; y++)
+            //    {
+            //        Rectangle tile = new Rectangle();
+            //        RenderTile(tile, gameArea[x, y]);
+            //        _tiles[x, y] = tile; //hráčovu dlaždici si poznačím do mapy
+            //        Grid.SetRow(tile, y);
+            //        Grid.SetColumn(tile, x);
+            //        display.Children.Add(tile);
+            //    }
+            //}
+            #endregion
+        }
         private void RenderTile(Rectangle tile, TileState state)
         {
             switch (state)
