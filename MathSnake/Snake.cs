@@ -16,18 +16,23 @@ namespace MathSnake
     };
     class Snake
     {
-        public string snakeName = "Arnold";
-        public int snakeLength = 3;
+        public string SnakeName;
+        public int SnakeLength;
+        public Snake(int snakeLength = 3, string snakeName = "Arnold")
+        {
+            SnakeLength = snakeLength;
+            SnakeName = snakeName;
+        }
         public void GenerateSnake(TileState[,] grid)
         {
             int rowCount = grid.GetLength(0);
             int columnCount = grid.GetLength(1);
             grid[rowCount / 2, columnCount / 2] = TileState.SnakeHead;
-            for (int i = 1; i < snakeLength; i++)
+            for (int i = 1; i < SnakeLength; i++)
             {
                 grid[rowCount / 2 - i, columnCount / 2] = TileState.SnakeBody;
             }
-            grid[rowCount / 2 - snakeLength, columnCount / 2] = TileState.SnakeTail;
+            grid[rowCount / 2 - SnakeLength, columnCount / 2] = TileState.SnakeTail;
         }
     }
 }
