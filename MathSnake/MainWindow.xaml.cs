@@ -29,8 +29,10 @@ namespace MathSnake
             InitializeComponent();
             CreateGrid(GameAreaGrid);
             Snake snake = new();
-            snake.GenerateSnake(_gameArea);
+            snake.GenerateSnake(_gameArea, snake);
             UpdateTileStates(GameAreaGrid, _gameArea);
+            snake.HeadPosition = GetCoordinatesOfTile(_gameArea, TileState.SnakeHead);
+            snake.TailPosition = GetCoordinatesOfTile(_gameArea, TileState.SnakeTail);
         }
         /// <summary>
         /// Fills the grid with Rows and Columns
@@ -126,6 +128,30 @@ namespace MathSnake
                     tile.Style = FindResource("FoodTile") as Style;
                     break;
             }
+        }
+
+        /// <summary>
+        /// Returns the coordinates of the first Tilestate in multidimensional array
+        /// </summary>
+        /// <param name="grid"></param>
+        /// <param name="find"></param>
+        /// <returns></returns>
+        public Point GetCoordinatesOfTile(TileState[,] grid, TileState find)
+        {
+            Point coordinates;
+            for (int i = 0; i < grid.GetLength(0); i++)
+            {
+                for (int j = 0; j < grid.GetLength(1); j++)
+                {
+                    if (grid[i, j] == find)
+                    {
+                        coordinates.X = i;
+                        coordinates.Y = j;
+                        break;
+                    }
+                }
+            }
+            return coordinates;
         }
     }
 }

@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Channels;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms;
 
 namespace MathSnake
 {
@@ -16,16 +19,18 @@ namespace MathSnake
     };
     class Snake
     {
-        public string SnakeName;
-        public int SnakeLength;
-        public MovementDirection Direction;
+        public string SnakeName { get; set; }
+        public int SnakeLength { get; set; }
+        public MovementDirection Direction { get; set; }
+        public Point HeadPosition { get; set; }
+        public Point TailPosition { get; set; }
         public Snake(int snakeLength = 3, string snakeName = "Arnold", MovementDirection movementDirection = MovementDirection.Right)
         {
             SnakeLength = snakeLength;
             SnakeName = snakeName;
             Direction = movementDirection;
         }
-        public void GenerateSnake(TileState[,] grid)
+        public void GenerateSnake(TileState[,] grid, Snake snake)
         {
             int rowCount = grid.GetLength(0);
             int columnCount = grid.GetLength(1);
@@ -34,12 +39,13 @@ namespace MathSnake
             {
                 grid[rowCount / 2 - i, columnCount / 2] = TileState.SnakeBody;
             }
+
             grid[rowCount / 2 - SnakeLength, columnCount / 2] = TileState.SnakeTail;
         }
-
-        public void SnakeMovement(Snake snake, MovementDirection direction)
+        
+        public void SnakeMovement(TileState[,] grid, Snake snake, MovementDirection direction)
         {
-
+            
         }
     }
 }
