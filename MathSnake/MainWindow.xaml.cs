@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -33,6 +34,9 @@ namespace MathSnake
             UpdateTileStates(GameAreaGrid, _gameArea);
             snake.HeadPosition = GetCoordinatesOfTile(_gameArea, TileState.SnakeHead);
             snake.TailPosition = GetCoordinatesOfTile(_gameArea, TileState.SnakeTail);
+            snake.SnakeMovement(_gameArea,MovementDirection.Right);
+            Thread.Sleep(20000);
+            UpdateTileStates(GameAreaGrid,_gameArea);
         }
         /// <summary>
         /// Fills the grid with Rows and Columns
@@ -54,7 +58,7 @@ namespace MathSnake
         /// </summary>
         /// <param name="display"></param>
         /// <param name="gameArea"></param>
-        private void UpdateTileStates(Grid display, TileState[,] gameArea)
+        public void UpdateTileStates(Grid display, TileState[,] gameArea)
         {
             _tiles = new Rectangle[_gameSize, _gameSize];
 

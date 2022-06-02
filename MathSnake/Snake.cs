@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
+using System.Windows.Shapes;
 
 namespace MathSnake
 {
@@ -43,9 +44,16 @@ namespace MathSnake
             grid[rowCount / 2 - SnakeLength, columnCount / 2] = TileState.SnakeTail;
         }
         
-        public void SnakeMovement(TileState[,] grid, Snake snake, MovementDirection direction)
+        public void SnakeMovement(TileState[,] grid, MovementDirection direction)
         {
-            
+            int headPositionX = Convert.ToInt32(this.HeadPosition.X);
+            int headPositionY = Convert.ToInt32(this.HeadPosition.Y);
+            int tailPositionX = Convert.ToInt32(this.TailPosition.X);
+            int tailPositionY = Convert.ToInt32(this.TailPosition.Y);
+            grid[headPositionX + 1, headPositionY] = TileState.SnakeHead;
+            grid[headPositionX, headPositionY] = TileState.SnakeBody;
+            grid[tailPositionX + 1, tailPositionY] = TileState.SnakeTail;
+            grid[tailPositionX, tailPositionY] = TileState.Empty;
         }
     }
 }
