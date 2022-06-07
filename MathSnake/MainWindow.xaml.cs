@@ -35,7 +35,6 @@ namespace MathSnake
             snake.HeadPosition = GetCoordinatesOfTile(_gameArea, TileState.SnakeHead);
             snake.TailPosition = GetCoordinatesOfTile(_gameArea, TileState.SnakeTail);
             snake.SnakeMovement(_gameArea,MovementDirection.Right);
-            Thread.Sleep(20000);
             UpdateTileStates(GameAreaGrid,_gameArea);
         }
         /// <summary>
