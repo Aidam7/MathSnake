@@ -53,5 +53,6 @@
         </Grid>
         <!--GAME AREA-->
         <Grid x:Name="GameAreaGrid" Grid.Row="1" Grid.Column="1" Margin="15" Background="AliceBlue"/>
+        <Button Grid.Column="2" Content="Button" HorizontalAlignment="Left" Height="69" Margin="29,42,0,0" Grid.Row="1" VerticalAlignment="Top" Width="120" Click="Button_Click"/>
     </Grid>
 </Window>

@@ -24,18 +24,19 @@ namespace MathSnake
         private Rectangle[,] _tiles;
         private int _gameSize = 25;
         private TileState[,] _gameArea;
+        private Snake snake;
         public MainWindow()
         {
             _gameArea = new TileState[_gameSize, _gameSize];
             InitializeComponent();
             CreateGrid(GameAreaGrid);
-            Snake snake = new();
+            snake = new();
             snake.GenerateSnake(_gameArea, snake);
             UpdateTileStates(GameAreaGrid, _gameArea);
             snake.HeadPosition = GetCoordinatesOfTile(_gameArea, TileState.SnakeHead);
             snake.TailPosition = GetCoordinatesOfTile(_gameArea, TileState.SnakeTail);
             snake.SnakeMovement(_gameArea,MovementDirection.Right);
-            UpdateTileStates(GameAreaGrid,_gameArea);
+            
         }
         /// <summary>
         /// Fills the grid with Rows and Columns
@@ -66,6 +67,7 @@ namespace MathSnake
                 for (int y = 0; y < _gameSize; y++)
                 {
                     Rectangle tile = new Rectangle();
+                    display.Children.Remove(tile);
                     RenderTile(tile, gameArea[x, y]);
                     _tiles[x, y] = tile;
                     Grid.SetRow(tile, y);
@@ -155,6 +157,15 @@ namespace MathSnake
                 }
             }
             return coordinates;
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            while (true)
+            {
+                snake.ContinuousMovement(_gameArea, MovementDirection.Right, 500);
+                UpdateTileStates(GameAreaGrid, _gameArea);
+            }
         }
     }
 }
