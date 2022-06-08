@@ -13,6 +13,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Timers;
+using Timer = System.Timers.Timer;
 
 namespace MathSnake
 {
@@ -21,21 +23,28 @@ namespace MathSnake
     /// </summary>
     public partial class MainWindow : Window
     {
-        private Rectangle[,] _tiles;
-        private int _gameSize = 25;
-        private TileState[,] _gameArea;
+        public Rectangle[,] _tiles;
+        public int _gameSize = 25;
+        public TileState[,] _gameArea;
+        private Snake snake;
+        public Timer timer;
         public MainWindow()
         {
             _gameArea = new TileState[_gameSize, _gameSize];
             InitializeComponent();
             CreateGrid(GameAreaGrid);
-            Snake snake = new();
+            snake = new();
+            timer = new();
+            timer.Interval = snake.Speed;
+            timer.AutoReset = true;
+            timer.Enabled = true;
             snake.GenerateSnake(_gameArea, snake);
             UpdateTileStates(GameAreaGrid, _gameArea);
+            snake.SnakeMovement(_gameArea,MovementDirection.Right);
             snake.HeadPosition = GetCoordinatesOfTile(_gameArea, TileState.SnakeHead);
             snake.TailPosition = GetCoordinatesOfTile(_gameArea, TileState.SnakeTail);
-            snake.SnakeMovement(_gameArea,MovementDirection.Right);
-            UpdateTileStates(GameAreaGrid,_gameArea);
+            UpdateSingleTile(GameAreaGrid,_gameArea, snake.HeadPosition);
+            UpdateSingleTile(GameAreaGrid, _gameArea, snake.TailPosition);
         }
         /// <summary>
         /// Fills the grid with Rows and Columns
@@ -60,12 +69,12 @@ namespace MathSnake
         public void UpdateTileStates(Grid display, TileState[,] gameArea)
         {
             _tiles = new Rectangle[_gameSize, _gameSize];
-
             for (int x = 0; x < _gameSize; x++)
             {
                 for (int y = 0; y < _gameSize; y++)
                 {
                     Rectangle tile = new Rectangle();
+                    display.Children.Remove(tile);
                     RenderTile(tile, gameArea[x, y]);
                     _tiles[x, y] = tile;
                     Grid.SetRow(tile, y);
@@ -73,6 +82,12 @@ namespace MathSnake
                     display.Children.Add(tile);
                 }
             }
+        }
+
+        public void UpdateSingleTile(Grid display, TileState[,] gameArea, Point coordinates)
+        {
+            Rectangle tile = _tiles[Convert.ToInt16(coordinates.X), Convert.ToInt16(coordinates.Y)];
+            RenderTile(tile, gameArea[Convert.ToInt16(coordinates.X), Convert.ToInt16(coordinates.Y)]);
         }
         /// <summary>
         /// Method InitializeGameArea was split into UpdateTileStates() and CreateGrid()
@@ -155,6 +170,15 @@ namespace MathSnake
                 }
             }
             return coordinates;
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            while (true)
+            {
+                snake.SnakeMovement(_gameArea,MovementDirection.Right);
+                UpdateTileStates(GameAreaGrid, _gameArea);
+            }
         }
     }
 }
