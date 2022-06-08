@@ -67,6 +67,7 @@ namespace MathSnake
                 grid[headPositionX, headPositionY + 1] = TileState.SnakeHead;
                 grid[tailPositionX, tailPositionY + 1] = TileState.SnakeTail;
                 grid[tailPositionX, tailPositionY] = TileState.Empty;
+                
             }
             else if (direction == MovementDirection.Down)
             {
@@ -96,7 +97,6 @@ namespace MathSnake
         }
         public void ContinuousMovement(TileState[,] grid, MovementDirection direction, double speed)
         {
-           
             didTimerTick = false;
             Timer timer = new Timer();
             timer.Interval = speed;
@@ -105,6 +105,7 @@ namespace MathSnake
             if (didTimerTick)
             {
                 SnakeMovement(grid, direction);
+
             }
         }
         public void HandleTimerElapsed(object sender, ElapsedEventArgs e)
