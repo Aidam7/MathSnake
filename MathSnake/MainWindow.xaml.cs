@@ -23,29 +23,35 @@ namespace MathSnake
     /// </summary>
     public partial class MainWindow : Window
     {
-        public Rectangle[,] _tiles;
         public int _gameSize = 25;
         public TileState[,] _gameArea;
         private Snake snake;
         public Timer timer;
+        public Rectangle[,] _tiles;
         public MainWindow()
         {
             _gameArea = new TileState[_gameSize, _gameSize];
             InitializeComponent();
-            CreateGrid(GameAreaGrid);
+            InitializeGameArea(GameAreaGrid, _gameArea);
             snake = new();
             timer = new();
             timer.Interval = snake.Speed;
             timer.AutoReset = true;
             timer.Enabled = true;
             snake.GenerateSnake(_gameArea, snake);
-            UpdateTileStates(GameAreaGrid, _gameArea);
-            snake.SnakeMovement(_gameArea,MovementDirection.Right);
+            //UpdateTileStates(GameAreaGrid, _gameArea);
+            for (int x = 0; x < _gameSize; x++)
+            {
+                for (int y = 0; y < _gameSize; y++)
+                {
+                    RenderTile(_tiles[x, y], _gameArea[x, y]);
+                }
+            }
             snake.HeadPosition = GetCoordinatesOfTile(_gameArea, TileState.SnakeHead);
             snake.TailPosition = GetCoordinatesOfTile(_gameArea, TileState.SnakeTail);
-            UpdateSingleTile(GameAreaGrid,_gameArea, snake.HeadPosition);
-            UpdateSingleTile(GameAreaGrid, _gameArea, snake.TailPosition);
+            snake.SnakeMovement(_gameArea, MovementDirection.Right);
         }
+
         /// <summary>
         /// Fills the grid with Rows and Columns
         /// </summary>
@@ -60,6 +66,17 @@ namespace MathSnake
             {
                 display.ColumnDefinitions.Add(new ColumnDefinition());
             }
+
+            _tiles = new Rectangle[_gameSize, _gameSize];
+            for (int x = 0; x < _gameSize; x++)
+            {
+                for (int y = 0; y < _gameSize; y++)
+                {
+                    _tiles[x, y] = new Rectangle();
+                }
+            }
+
+
         }
         /// <summary>
         /// Refreshes TileStates on the display
@@ -68,13 +85,12 @@ namespace MathSnake
         /// <param name="gameArea"></param>
         public void UpdateTileStates(Grid display, TileState[,] gameArea)
         {
-            _tiles = new Rectangle[_gameSize, _gameSize];
+            Rectangle tile = new Rectangle();
             for (int x = 0; x < _gameSize; x++)
             {
                 for (int y = 0; y < _gameSize; y++)
                 {
-                    Rectangle tile = new Rectangle();
-                    display.Children.Remove(tile);
+                    tile = _tiles[x, y];
                     RenderTile(tile, gameArea[x, y]);
                     _tiles[x, y] = tile;
                     Grid.SetRow(tile, y);
@@ -84,7 +100,7 @@ namespace MathSnake
             }
         }
 
-        public void UpdateSingleTile(Grid display, TileState[,] gameArea, Point coordinates)
+        public void UpdateSingleTile(TileState[,] gameArea, Point coordinates)
         {
             Rectangle tile = _tiles[Convert.ToInt16(coordinates.X), Convert.ToInt16(coordinates.Y)];
             RenderTile(tile, gameArea[Convert.ToInt16(coordinates.X), Convert.ToInt16(coordinates.Y)]);
@@ -97,36 +113,35 @@ namespace MathSnake
         private void InitializeGameArea(Grid display, TileState[,] gameArea)
         {
             //This method should not be used, instead use the methods separately
-            CreateGrid(display);
-            UpdateTileStates(display, gameArea);
-            #region Merged code of CreateGrid and UpdateTileStates
-            //DO NOT USE
-            //for (int i = 0; i < _gameSize; i++)
-            //{
-            //    display.RowDefinitions.Add(new RowDefinition());
-            //}
-            //for (int i = 0; i < _gameSize; i++)
-            //{
-            //    display.ColumnDefinitions.Add(new ColumnDefinition());
-            //}
+            //CreateGrid(display);
+            //UpdateTileStates(display, gameArea);
 
-            //_tiles = new Rectangle[_gameSize, _gameSize]; //uložím si mapu, kde který rectangle je
 
-            //for (int x = 0; x < _gameSize; x++)
-            //{
-            //    for (int y = 0; y < _gameSize; y++)
-            //    {
-            //        Rectangle tile = new Rectangle();
-            //        RenderTile(tile, gameArea[x, y]);
-            //        _tiles[x, y] = tile; //hráčovu dlaždici si poznačím do mapy
-            //        Grid.SetRow(tile, y);
-            //        Grid.SetColumn(tile, x);
-            //        display.Children.Add(tile);
-            //    }
-            //}
-            #endregion
+            for (int i = 0; i < _gameSize; i++)
+            {
+                display.RowDefinitions.Add(new RowDefinition());
+            }
+            for (int i = 0; i < _gameSize; i++)
+            {
+                display.ColumnDefinitions.Add(new ColumnDefinition());
+            }
+
+            _tiles = new Rectangle[_gameSize, _gameSize]; //uložím si mapu, kde který rectangle je
+
+            for (int x = 0; x < _gameSize; x++)
+            {
+                for (int y = 0; y < _gameSize; y++)
+                {
+                    Rectangle tile = new Rectangle();
+                    RenderTile(tile, gameArea[x, y]);
+                    _tiles[x, y] = tile; //hráčovu dlaždici si poznačím do mapy
+                    Grid.SetRow(tile, y);
+                    Grid.SetColumn(tile, x);
+                    display.Children.Add(tile);
+                }
+            }
         }
-        private void RenderTile(Rectangle tile, TileState state)
+        public void RenderTile(Rectangle tile, TileState state)
         {
             switch (state)
             {
@@ -174,10 +189,39 @@ namespace MathSnake
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            while (true)
+            snake.SnakeMovement(_gameArea, MovementDirection.Right);
+            for (int x = 0; x < _gameSize; x++)
             {
-                snake.SnakeMovement(_gameArea,MovementDirection.Right);
-                UpdateTileStates(GameAreaGrid, _gameArea);
+                for (int y = 0; y < _gameSize; y++)
+                {
+                    RenderTile(_tiles[x, y], _gameArea[x, y]);
+                }
+            }
+
+        }
+
+        private void Window_OnKeyDown(object sender, KeyEventArgs e)
+        {
+            switch(e.Key)
+            {
+                case Key.Down: pomoc.Content = "Tvoje máma"; snake.SnakeMovement(_gameArea,MovementDirection.Up); RenderAllTiles(); break;
+                case Key.Up: pomoc.Content = "Tvoje sestra"; break;
+                
+            }
+        }
+        private void MainWindow_OnContentRendered(object? sender, EventArgs e)
+        {
+            RenderAllTiles();
+        }
+
+        private void RenderAllTiles()
+        {
+            for (int x = 0; x < _gameSize; x++)
+            {
+                for (int y = 0; y < _gameSize; y++)
+                {
+                    RenderTile(_tiles[x, y], _gameArea[x, y]);
+                }
             }
         }
     }

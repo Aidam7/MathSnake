@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MathSnake"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Snake" Height="450" Width="800" KeyDown="Window_OnKeyDown" ContentRendered="MainWindow_OnContentRendered">
     <Window.Resources>
         <Style x:Key="EmptyTile" TargetType="Rectangle">
             <Setter Property="Stroke" Value="Black"/>
@@ -53,6 +53,7 @@
         </Grid>
         <!--GAME AREA-->
         <Grid x:Name="GameAreaGrid" Grid.Row="1" Grid.Column="1" Margin="15" Background="AliceBlue"/>
-        <Button Grid.Column="2" Content="Button" HorizontalAlignment="Left" Height="69" Margin="29,42,0,0" Grid.Row="1" VerticalAlignment="Top" Width="120" Click="Button_Click"/>
+        <Button x:Name="buttonPomoc" Grid.Column="2" Content="Button" HorizontalAlignment="Left" Height="69" Margin="29,42,0,0" Grid.Row="1" VerticalAlignment="Top" Width="120" Click="Button_Click"/>
+        <Label x:Name="pomoc" Grid.Column="2" Content="Label" HorizontalAlignment="Left" Height="75" Margin="29,157,0,0" Grid.Row="1" VerticalAlignment="Top" Width="120"/>
     </Grid>
 </Window>

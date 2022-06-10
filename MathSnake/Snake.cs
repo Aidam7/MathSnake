@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using System.Windows.Shapes;
 using System.Timers;
 using System.Windows.Media.Animation;
+using Microsoft.Win32;
 using Timer = System.Timers.Timer;
 
 namespace MathSnake
@@ -28,16 +29,38 @@ namespace MathSnake
         public string SnakeName { get; set; }
         public int SnakeLength { get; set; }
         public MovementDirection Direction { get; set; }
-        public Point HeadPosition { get; set; }
-        public Point TailPosition { get; set; }
+
+        public Point HeadPosition
+        {
+            get
+            {
+                return _headPosition;
+            }
+            set
+            {
+                _headPosition = value;
+            }
+        }
+        public Point TailPosition
+        {
+            get
+            {
+                return _tailPosition;
+            }
+            set
+            {
+                _tailPosition = value;
+            }
+        }
         public double Speed { get; set; }
+        private Point _headPosition;
+        private Point _tailPosition;
         public Snake(int snakeLength = 3, string snakeName = "Arnold", MovementDirection movementDirection = MovementDirection.Right, double movementSpeed = 500)
         {
             SnakeLength = snakeLength;
             SnakeName = snakeName;
             Direction = movementDirection;
             Speed = movementSpeed;
-
         }
         public void GenerateSnake(TileState[,] grid, Snake snake)
         {
@@ -48,8 +71,8 @@ namespace MathSnake
             {
                 grid[rowCount / 2 - i, columnCount / 2] = TileState.SnakeBody;
             }
-
             grid[rowCount / 2 - SnakeLength, columnCount / 2] = TileState.SnakeTail;
+            
         }
         public void SnakeMovement(TileState[,] grid, MovementDirection direction)
         {
@@ -57,17 +80,14 @@ namespace MathSnake
             int headPositionY = Convert.ToInt32(this.HeadPosition.Y);
             int tailPositionX = Convert.ToInt32(this.TailPosition.X);
             int tailPositionY = Convert.ToInt32(this.TailPosition.Y);
-            grid[headPositionX + 1, headPositionY] = TileState.SnakeHead;
-            grid[headPositionX, headPositionY] = TileState.SnakeBody;
-            grid[tailPositionX + 1, tailPositionY] = TileState.SnakeTail;
-            grid[tailPositionX, tailPositionY] = TileState.Empty;
             if (direction == MovementDirection.Up)
             {
                 grid[headPositionX, headPositionY] = TileState.SnakeBody;
                 grid[headPositionX, headPositionY + 1] = TileState.SnakeHead;
-                grid[tailPositionX, tailPositionY + 1] = TileState.SnakeTail;
+                grid[tailPositionX, tailPositionY] = TileState.SnakeTail;
                 grid[tailPositionX, tailPositionY] = TileState.Empty;
-                
+                _headPosition.Y = headPositionY + 1;
+                _tailPosition.Y = tailPositionY + 1;
             }
             else if (direction == MovementDirection.Down)
             {
@@ -75,6 +95,8 @@ namespace MathSnake
                 grid[headPositionX, headPositionY - 1] = TileState.SnakeHead;
                 grid[tailPositionX, tailPositionY - 1] = TileState.SnakeTail;
                 grid[tailPositionX, tailPositionY] = TileState.Empty;
+                _headPosition.Y = headPositionY - 1;
+                _tailPosition.Y = tailPositionY - 1;
             }
             else if (direction == MovementDirection.Left)
             {
@@ -82,6 +104,8 @@ namespace MathSnake
                 grid[headPositionX - 1, headPositionY] = TileState.SnakeHead;
                 grid[tailPositionX - 1, tailPositionY] = TileState.SnakeTail;
                 grid[tailPositionX, tailPositionY] = TileState.Empty;
+                _headPosition.X = headPositionX - 1;
+                _tailPosition.X = tailPositionX - 1;
             }
             else if(direction == MovementDirection.Right)
             {
@@ -89,6 +113,8 @@ namespace MathSnake
                 grid[headPositionX + 1, headPositionY] = TileState.SnakeHead;
                 grid[tailPositionX + 1, tailPositionY] = TileState.SnakeTail;
                 grid[tailPositionX, tailPositionY] = TileState.Empty;
+                _headPosition.X = headPositionX + 1;
+                _tailPosition.X = tailPositionX + 1;
             }
             else
             {
@@ -102,10 +128,10 @@ namespace MathSnake
             timer.Interval = speed;
             timer.Start();
             timer.Elapsed += HandleTimerElapsed;
+            timer.AutoReset = true;
             if (didTimerTick)
             {
                 SnakeMovement(grid, direction);
-
             }
         }
         public void HandleTimerElapsed(object sender, ElapsedEventArgs e)
