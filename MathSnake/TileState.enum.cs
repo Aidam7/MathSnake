@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace MathSnake
 {
-    public enum TileState : byte { Empty, SnakeHead, SnakeBody, SnakeTail, Food };
+    public enum TileState : byte { Empty, SnakeHead, SnakeBody, SnakeTail, Food, Barrier, GameOver };
 }

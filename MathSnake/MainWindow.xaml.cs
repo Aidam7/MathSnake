@@ -22,6 +22,7 @@ namespace MathSnake
     /// </summary>
     public partial class MainWindow : Window
     {
+        public bool IsGameOver;
         public int _gameSize = 25;
         public TileState[,] _gameArea;
         private Snake snake;
@@ -30,6 +31,7 @@ namespace MathSnake
         private DispatcherTimer _timer = new DispatcherTimer();
         public MainWindow()
         {
+            IsGameOver = false;
             _gameArea = new TileState[_gameSize, _gameSize];
             InitializeComponent();
             InitializeGameArea(GameAreaGrid, _gameArea);
@@ -45,9 +47,9 @@ namespace MathSnake
                     RenderTile(_tiles[x, y], _gameArea[x, y]);
                 }
             }
-            SnakeMovement(_gameArea, snake);
-            SnakeMovement(_gameArea, snake);
-            SnakeMovement(_gameArea, snake);
+            SnakeMovement(_gameArea, snake, false);
+            SnakeMovement(_gameArea, snake, false);
+            SnakeMovement(_gameArea, snake, false);
         }
         private void TimerOnTick(object? sender, EventArgs e)
         {
@@ -132,6 +134,12 @@ namespace MathSnake
                 case TileState.Food:
                     tile.Style = FindResource("FoodTile") as Style;
                     break;
+                case TileState.Barrier:
+                    tile.Style = FindResource("BarrierTile") as Style;
+                    break;
+                case TileState.GameOver:
+                    tile.Style = FindResource("GameOverTile") as Style;
+                    break;
             }
         }
         /// <summary>
@@ -198,6 +206,8 @@ namespace MathSnake
                 case Key.Enter:
                     if (_timer.IsEnabled)
                         _timer.Stop();
+                    else if (IsGameOver)
+                        _timer.Stop();
                     else
                         _timer.Start();
                     break;
@@ -226,7 +236,7 @@ namespace MathSnake
                     grid[(int)Part.Coordinates.X, (int)Part.Coordinates.Y] = TileState.SnakeBody;
             }
         }
-        public void SnakeMovement(TileState[,] grid, Snake snake)
+        public void SnakeMovement(TileState[,] grid, Snake snake, bool doCollisionCheck = true)
         {
             SnakePart tail = SnakeParts[0];
             grid[(int)tail.Coordinates.X, (int)tail.Coordinates.Y] = TileState.Empty;
@@ -248,9 +258,47 @@ namespace MathSnake
                 case MovementDirection.Down: newY++; break;
                 case MovementDirection.Left: newX--; break;
             }
-            SnakeParts.Add(new SnakePart(newX, newY, true));
-            grid[(int)newX, (int)newY] = TileState.SnakeHead;
-            RenderTile(_tiles[(int)newX, (int)newY], grid[(int)newX, (int)newY]);
+
+            try
+            {
+                SnakeParts.Add(new SnakePart(newX, newY, true));
+                grid[(int)newX, (int)newY] = TileState.SnakeHead;
+                if (doCollisionCheck)
+                    CollisionCheck();
+                RenderTile(_tiles[(int)newX, (int)newY], grid[(int)newX, (int)newY]);
+            }
+            catch (IndexOutOfRangeException)
+            {
+                GameOverHandler();
+            }
+        }
+
+        public void CollisionCheck()
+        {
+            SnakePart head = SnakeParts[SnakeParts.Count - 1];
+            if (head.Coordinates.X >= _tiles.GetLength(0) || head.Coordinates.Y >= _tiles.GetLength(1) || head.Coordinates.X < 0 || head.Coordinates.Y < 0)
+                GameOverHandler();
+            foreach (var snakePart in SnakeParts)
+            {
+                if (snakePart.Coordinates.X == head.Coordinates.X && snakePart.Coordinates.Y == head.Coordinates.Y && snakePart.isHead == false)
+                    GameOverHandler();
+            }
+        }
+
+        public void GameOverHandler()
+        {
+            _timer.Stop();
+            for (int i = 0; i < _gameArea.GetLength(0); i++)
+            {
+                for (int j = 0; j < _gameArea.GetLength(1); j++)
+                {
+                    if (_gameArea[i, j] == TileState.Empty)
+                        _gameArea[i, j] = TileState.GameOver;
+                    RenderTile(_tiles[i, j], TileState.GameOver);
+                }
+            }
+            MessageBox.Show("Prohráls lol", "pomoc", MessageBoxButton.OK, MessageBoxImage.Hand);
+            this.Close();
         }
     }
 }
