@@ -298,6 +298,7 @@ namespace MathSnake
                 }
             }
             MessageBox.Show("Prohráls lol", "pomoc", MessageBoxButton.OK, MessageBoxImage.Hand);
+            this.Close();
         }
     }
 }
