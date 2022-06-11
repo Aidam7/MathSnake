@@ -6,24 +6,6 @@
         xmlns:local="clr-namespace:MathSnake"
         mc:Ignorable="d"
         Title="Snake" Height="450" Width="800" KeyUp="MainWindow_OnKeyUp" KeyDown="MainWindow_OnKeyDown" ContentRendered="MainWindow_OnContentRendered">
-    <Window.Resources>
-        <Style x:Key="EmptyTile" TargetType="Rectangle">
-            <Setter Property="Stroke" Value="Black"/>
-            <Setter Property="Fill" Value="LawnGreen"/>
-        </Style>
-        <Style x:Key="SnakeHeadTile" TargetType="Rectangle" BasedOn="{StaticResource EmptyTile}">
-            <Setter Property="Fill" Value="Orange"/>
-        </Style>
-        <Style x:Key="SnakeBodyTile" TargetType="Rectangle" BasedOn="{StaticResource EmptyTile}">
-            <Setter Property="Fill" Value="ForestGreen"/>
-        </Style>
-        <Style x:Key="SnakeTailTile" TargetType="Rectangle" BasedOn="{StaticResource SnakeBodyTile}">
-            <Setter Property="Fill" Value="OrangeRed"/>
-        </Style>
-        <Style x:Key="FoodTile" TargetType="Rectangle" BasedOn="{StaticResource EmptyTile}">
-            <Setter Property="Fill" Value="Red"/>
-        </Style>
-    </Window.Resources>
     <Grid x:Name="AppGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" x:Name="TopBarArea"/>
