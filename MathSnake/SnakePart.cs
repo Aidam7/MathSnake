@@ -7,9 +7,20 @@ using System.Threading.Tasks;
 
 namespace MathSnake
 {
-    class SnakePart
+    public class SnakePart
     {
-        public Point Coordinates;
-        public bool isHead;
+        private Point _coordinates;
+        public Point Coordinates {
+            get { return _coordinates; }
+            set { _coordinates = value; }
+        }
+        public bool isHead { get; set; }
+
+        public SnakePart(int X, int Y, bool isSnakeHead = false)
+        {
+            _coordinates.X = X;
+            _coordinates.Y = Y;
+            isHead = isSnakeHead;
+        }
     }
 }
