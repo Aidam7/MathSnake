@@ -35,6 +35,7 @@ namespace MathSnake
             InitializeGameArea(GameAreaGrid, _gameArea);
             snake = new();
             _timer.Tick += TimerOnTick;
+            _timer.Interval = TimeSpan.FromMilliseconds(snake.Speed);
             GenerateSnake(_gameArea, snake);
             //UpdateTileStates(GameAreaGrid, _gameArea);
             for (int x = 0; x < _gameSize; x++)
@@ -48,12 +49,10 @@ namespace MathSnake
             SnakeMovement(_gameArea, snake);
             SnakeMovement(_gameArea, snake);
         }
-
         private void TimerOnTick(object? sender, EventArgs e)
         {
-            SnakeMovement(_gameArea,snake);
+            SnakeMovement(_gameArea, snake);
         }
-
         /// <summary>
         /// Fills the grid with Rows and Columns
         /// </summary>
@@ -179,21 +178,35 @@ namespace MathSnake
                 }
             }
         }
-        private void Window_OnKeyDown(object sender, KeyEventArgs e)
+        private void MainWindow_OnKeyDown(object sender, KeyEventArgs e)
+        {
+            if (_timer.IsEnabled)
+            {
+                switch (e.Key)
+                {
+                    case Key.Up or Key.W: snake.Direction = MovementDirection.Up; break;
+                    case Key.Down or Key.S: snake.Direction = MovementDirection.Down; break;
+                    case Key.Right or Key.D: snake.Direction = MovementDirection.Right; break;
+                    case Key.Left or Key.A: snake.Direction = MovementDirection.Left; break;
+                }
+            }
+        }
+        private void MainWindow_OnKeyUp(object sender, KeyEventArgs e)
         {
             switch (e.Key)
             {
-                case Key.Up: snake.Direction = MovementDirection.Up; break;
-                case Key.Down: snake.Direction = MovementDirection.Down; break;
-                case Key.Right: snake.Direction = MovementDirection.Right; break;
-                case Key.Left: snake.Direction = MovementDirection.Left; break;
+                case Key.Enter:
+                    if (_timer.IsEnabled)
+                        _timer.Stop();
+                    else
+                        _timer.Start();
+                    break;
             }
         }
         private void MainWindow_OnContentRendered(object? sender, EventArgs e)
         {
             RenderAllTiles();
         }
-
         public void GenerateSnake(TileState[,] grid, Snake snake)
         {
             int rowCount = grid.GetLength(0);
@@ -223,6 +236,7 @@ namespace MathSnake
             {
                 Part.isHead = false;
                 grid[(int)Part.Coordinates.X, (int)Part.Coordinates.Y] = TileState.SnakeBody;
+                RenderTile(_tiles[(int)Part.Coordinates.X, (int)Part.Coordinates.Y], grid[(int)Part.Coordinates.X, (int)Part.Coordinates.Y]);
             }
             SnakePart head = SnakeParts[SnakeParts.Count - 1];
             int newX = (int)head.Coordinates.X;
@@ -234,9 +248,9 @@ namespace MathSnake
                 case MovementDirection.Down: newY++; break;
                 case MovementDirection.Left: newX--; break;
             }
-            SnakeParts.Add(new SnakePart(newX,newY,true));
+            SnakeParts.Add(new SnakePart(newX, newY, true));
             grid[(int)newX, (int)newY] = TileState.SnakeHead;
-            RenderTile(_tiles[(int)newX, (int)newY],grid[(int)newX, (int)newY]);
+            RenderTile(_tiles[(int)newX, (int)newY], grid[(int)newX, (int)newY]);
         }
     }
 }

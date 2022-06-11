@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MathSnake"
         mc:Ignorable="d"
-        Title="Snake" Height="450" Width="800" KeyDown="Window_OnKeyDown" ContentRendered="MainWindow_OnContentRendered">
+        Title="Snake" Height="450" Width="800" KeyUp="MainWindow_OnKeyUp" KeyDown="MainWindow_OnKeyDown" ContentRendered="MainWindow_OnContentRendered">
     <Window.Resources>
         <Style x:Key="EmptyTile" TargetType="Rectangle">
             <Setter Property="Stroke" Value="Black"/>
