@@ -25,16 +25,44 @@ namespace MathSnake
     };
     public class Snake
     {
-        private bool didTimerTick;
         public string SnakeName { get; set; }
         public int SnakeLength { get; set; }
-        public MovementDirection Direction { get; set; }
+        private MovementDirection _direction;
+        public MovementDirection Direction
+        {
+            get
+            {
+                return _direction;
+            }
+            set
+            {
+                MovementDirection currentDirection = _direction;
+                bool changeDirection = true;
+                switch (value)
+                {
+                    case MovementDirection.Up:
+                        if(currentDirection == MovementDirection.Down)
+                            changeDirection = false;
+                        break;
+                    case MovementDirection.Down:
+                        if(currentDirection == MovementDirection.Up)
+                            changeDirection = false;
+                        break;
+                    case MovementDirection.Right:
+                        if (currentDirection == MovementDirection.Left)
+                            changeDirection = false;
+                        break;
+                    case MovementDirection.Left:
+                        if (currentDirection == MovementDirection.Right)
+                            changeDirection = false;
+                        break;
+                }
+                if(changeDirection)
+                    _direction = value;
+            }
+        }
 
-        public Point HeadPosition { get; set; }
-        public Point TailPosition { get; set; }
         public double Speed { get; set; }
-        public Point _headPosition;
-        public Point _tailPosition;
         public Snake(int snakeLength = 4, string snakeName = "Arnold", MovementDirection movementDirection = MovementDirection.Right, double movementSpeed = 500)
         {
             SnakeLength = snakeLength;
