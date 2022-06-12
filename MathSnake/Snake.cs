@@ -62,7 +62,7 @@ namespace MathSnake
             }
         }
         public double Speed { get; set; }
-        public Snake(int snakeLength = 4, string snakeName = "Arnold", MovementDirection movementDirection = MovementDirection.Right, double movementSpeed = 100)
+        public Snake(int snakeLength = 4, string snakeName = "Arnold", MovementDirection movementDirection = MovementDirection.Right, double movementSpeed = 250)
         {
             SnakeLength = snakeLength;
             SnakeName = snakeName;
