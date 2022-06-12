@@ -40,6 +40,7 @@ namespace MathSnake
             _gameArea = new TileState[_gameSize, _gameSize];
             InitializeComponent();
             InitializeGameArea(GameAreaGrid, _gameArea);
+            //GenerateBorderBarriers();
             snake = new();
             _timer.Tick += TimerOnTick;
             _timer.Interval = TimeSpan.FromMilliseconds(snake.Speed);
@@ -57,11 +58,8 @@ namespace MathSnake
             SnakeMovement(_gameArea, snake, false);
             SnakeMovement(_gameArea, snake, false);
             MessageBox.Show(
-                "Pro začátek hry stiskněte klávesu Enter, jejím zmáčknutím můžete i hru pozastavit\nPohybovat se můžete pomocí šipek či kláves WASD\nSbírejte červená jablka a vyhíbejte se šedým bariérám\n\nGLHF",
-                "", MessageBoxButton.OK, MessageBoxImage.Information);
-            MessageBox.Show(
-                "Dále se ve hře nachází bug, který způsobuje crash při vstupu do hraničních políček, tak se jím prosím vyhýbejte. :)\nUsilovně pracujeme na nápravě.",
-                "Pozor", MessageBoxButton.OK, MessageBoxImage.Error);
+                "As of right now, there is a bug in game which causes a Game over when the snake enters the border tiles\nHowever not to worry, we are working hard on a fix. :)",
+                "Caution", MessageBoxButton.OK, MessageBoxImage.Error);
             //GenerateBorderBarriers();
         }
         private void TimerOnTick(object? sender, EventArgs e)
@@ -115,11 +113,6 @@ namespace MathSnake
         /// <param name="state"></param>
         private void InitializeGameArea(Grid display, TileState[,] gameArea)
         {
-            //This method should not be used, instead use the methods separately
-            //CreateGrid(display);
-            //UpdateTileStates(display, gameArea);
-
-
             for (int i = 0; i < _gameSize; i++)
             {
                 display.RowDefinitions.Add(new RowDefinition());
@@ -279,19 +272,11 @@ namespace MathSnake
                 case MovementDirection.Down: newY++; break;
                 case MovementDirection.Left: newX--; break;
             }
-
-            try
-            {
-                SnakeParts.Add(new SnakePart(newX, newY, true));
+            SnakeParts.Add(new SnakePart(newX, newY, true));
                 grid[(int)newX, (int)newY] = TileState.SnakeHead;
+                RenderTile(_tiles[(int)newX, (int)newY], grid[(int)newX, (int)newY]);
                 if (doCollisionCheck)
                     CollisionCheck();
-                RenderTile(_tiles[(int)newX, (int)newY], grid[(int)newX, (int)newY]);
-            }
-            catch (IndexOutOfRangeException)
-            {
-                GameOverHandler();
-            }
         }
         public void CollisionCheck()
         {
@@ -305,20 +290,24 @@ namespace MathSnake
                 case MovementDirection.Left: incrementX--; break;
             }
             SnakePart head = SnakeParts[SnakeParts.Count - 1];
-            if (head.Coordinates.X + incrementX > _gameSize || head.Coordinates.Y + incrementY > _gameSize)
-                GameOverHandler();
+            if (head.Coordinates.X + incrementX >= _gameSize || head.Coordinates.Y + incrementY >= _gameSize || head.Coordinates.X + incrementX < 0 || head.Coordinates.Y + incrementY < 0)
+            {
+                GameOverHandler("Out of map");
+                return;
+            }
             foreach (var snakePart in SnakeParts)
             {
                 if (snakePart.Coordinates.X == head.Coordinates.X && snakePart.Coordinates.Y == head.Coordinates.Y && snakePart.isHead == false)
-                    GameOverHandler();
+                    GameOverHandler("Collided with itself");
             }
             if (_gameArea[(int)head.Coordinates.X + incrementX, (int)head.Coordinates.Y + incrementY] == TileState.Barrier)
-                GameOverHandler();
+                GameOverHandler("Hit a barrier");
             if (_gameArea[(int)head.Coordinates.X + incrementX, (int)head.Coordinates.Y + incrementY] == TileState.Food)
                 ConsumeFood(foodOnMap);
         }
-        public void GameOverHandler()
+        public void GameOverHandler(string deathMessage)
         {
+            string causeOfDeath = deathMessage;
             _timer.Stop();
             for (int i = 0; i < _gameArea.GetLength(0); i++)
             {
@@ -329,7 +318,7 @@ namespace MathSnake
                     RenderTile(_tiles[i, j], TileState.GameOver);
                 }
             }
-            MessageBox.Show($"You lost!\nYour score was {score}", "Uh oh", MessageBoxButton.OK, MessageBoxImage.Hand);
+            MessageBox.Show($"You lost!\nYour score was: {score}\n\n{causeOfDeath}", "Uh oh", MessageBoxButton.OK, MessageBoxImage.Hand);
             this.Close();
         }
 
@@ -337,8 +326,8 @@ namespace MathSnake
         {
             while (true)
             {
-                int cordX = rnd.Next(_gameSize);
-                int cordY = rnd.Next(_gameSize);
+                int cordX = rnd.Next(1,_gameSize-1);
+                int cordY = rnd.Next(1,_gameSize-1);
                 if (_gameArea[cordX, cordY] == TileState.Empty)
                 {
                     foodOnMap = new Food(cordX, cordY);
@@ -389,7 +378,7 @@ namespace MathSnake
         //    for (x = 0; x < _gameSize; x++)
         //    {
         //        _gameArea[x, y] = TileState.Barrier;
-        //        RenderTile(_tiles[x,y],TileState.Barrier);
+        //        RenderTile(_tiles[x, y], TileState.Barrier);
         //    }
         //    for (y = 0; y < _gameSize; y++)
         //    {

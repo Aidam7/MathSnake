@@ -31,11 +31,13 @@
             <!--Profile Area-->
             <Button Content="ProfilePlaceholder" Grid.Column="2" Grid.Row="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" Margin="0 0 5 0" Background="White"/>
             <!--BUILD NUMBER-->
-            <TextBox x:Name="BuildNumberTextBox" Text="Alpha 1" Grid.Column="0" Grid.Row="0"/>
+            <TextBox x:Name="BuildNumberTextBox" Text="Alpha 1" Grid.Column="0" Grid.Row="0" IsReadOnly="True"/>
             <!--Score-->
-            <TextBox x:Name="Score" Text="Score: 0" Grid.Column="1" Grid.Row="1" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"></TextBox>
+            <TextBox x:Name="Score" Text="Score: 0" Grid.Column="1" Grid.Row="1" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" IsReadOnly="True"></TextBox>
         </Grid>
         <!--GAME AREA-->
         <Grid x:Name="GameAreaGrid" Grid.Row="1" Grid.Column="1" Margin="15" Background="AliceBlue"/>
+        <TextBox Grid.Row="1" Grid.Column="0" Text="Press ENTER to pause&#xD;&#xA;&#xD;&#xA;Use Arrows or WASD for controls" IsReadOnly="True"/>
+        <TextBox Grid.Row="1" Grid.Column="2" Text="Eat the red apples&#xD;&#xA;&#xD;&#xA;Avoid the gray barriers&#xD;&#xA;&#xD;&#xA;Good Luck, Have Fun" IsReadOnly="True"/>
     </Grid>
 </Window>
