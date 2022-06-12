@@ -31,7 +31,9 @@
             <!--Profile Area-->
             <Button Content="ProfilePlaceholder" Grid.Column="2" Grid.Row="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" Margin="0 0 5 0" Background="White"/>
             <!--BUILD NUMBER-->
-            <TextBox x:Name="BuildNumberTextBox" Text="Alpha 0" Grid.Column="0" Grid.Row="0"/>
+            <TextBox x:Name="BuildNumberTextBox" Text="Alpha 1" Grid.Column="0" Grid.Row="0"/>
+            <!--Score-->
+            <TextBox x:Name="Score" Text="Score: 0" Grid.Column="1" Grid.Row="1" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"></TextBox>
         </Grid>
         <!--GAME AREA-->
         <Grid x:Name="GameAreaGrid" Grid.Row="1" Grid.Column="1" Margin="15" Background="AliceBlue"/>

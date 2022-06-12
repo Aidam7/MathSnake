@@ -22,6 +22,7 @@ namespace MathSnake
     /// </summary>
     public partial class MainWindow : Window
     {
+        private int score;
         public bool IsGameOver;
         public int _gameSize = 25;
         public TileState[,] _gameArea;
@@ -33,6 +34,7 @@ namespace MathSnake
         private int tickCount = 0;
         public MainWindow()
         {
+            score = 0;
             IsGameOver = false;
             _gameArea = new TileState[_gameSize, _gameSize];
             InitializeComponent();
@@ -328,7 +330,7 @@ namespace MathSnake
                     RenderTile(_tiles[i, j], TileState.GameOver);
                 }
             }
-            MessageBox.Show("Prohráls lol", "pomoc", MessageBoxButton.OK, MessageBoxImage.Hand);
+            MessageBox.Show($"You lost!\nYour score was {score}", "Uh oh", MessageBoxButton.OK, MessageBoxImage.Hand);
             this.Close();
         }
 
@@ -351,6 +353,8 @@ namespace MathSnake
         }
         public void ConsumeFood(Food food)
         {
+            score++;
+            Score.Text = $"Score: {score}";
             foodOnMap.IsFoodOnMap = false;
             snake.SnakeLength++;
             RenderTile(_tiles[(int)foodOnMap.Coordinates.X, (int)foodOnMap.Coordinates.Y], _gameArea[(int)foodOnMap.Coordinates.X, (int)foodOnMap.Coordinates.Y]);
