@@ -25,10 +25,12 @@ namespace MathSnake
         public bool IsGameOver;
         public int _gameSize = 25;
         public TileState[,] _gameArea;
+        private Food foodOnMap;
         private Snake snake;
         public Rectangle[,] _tiles;
         public List<SnakePart> SnakeParts = new List<SnakePart>();
         private DispatcherTimer _timer = new DispatcherTimer();
+        private int tickCount = 0;
         public MainWindow()
         {
             IsGameOver = false;
@@ -47,12 +49,29 @@ namespace MathSnake
                     RenderTile(_tiles[x, y], _gameArea[x, y]);
                 }
             }
+            GenerateFood();
             SnakeMovement(_gameArea, snake, false);
             SnakeMovement(_gameArea, snake, false);
             SnakeMovement(_gameArea, snake, false);
         }
         private void TimerOnTick(object? sender, EventArgs e)
         {
+            tickCount++;
+            if (tickCount % 5 == 0)
+            {
+                Point foodCord = GetCoordinatesOfTile(_gameArea, TileState.Food);
+                if (foodCord.X == -1 || foodCord.Y == -1)
+                {
+                    ConsumeFood(foodOnMap);
+                }
+            }
+
+            if (!foodOnMap.IsFoodOnMap)
+            {
+                GenerateFood();
+            }
+
+
             SnakeMovement(_gameArea, snake);
         }
         /// <summary>
@@ -159,10 +178,12 @@ namespace MathSnake
                     {
                         coordinates.X = i;
                         coordinates.Y = j;
-                        break;
+                        return coordinates;
                     }
                 }
             }
+            coordinates.X = -1;
+            coordinates.Y = -1;
             return coordinates;
         }
         private void RenderAllTiles()
@@ -186,19 +207,6 @@ namespace MathSnake
                 }
             }
         }
-        private void MainWindow_OnKeyDown(object sender, KeyEventArgs e)
-        {
-            if (_timer.IsEnabled)
-            {
-                switch (e.Key)
-                {
-                    case Key.Up or Key.W: snake.Direction = MovementDirection.Up; break;
-                    case Key.Down or Key.S: snake.Direction = MovementDirection.Down; break;
-                    case Key.Right or Key.D: snake.Direction = MovementDirection.Right; break;
-                    case Key.Left or Key.A: snake.Direction = MovementDirection.Left; break;
-                }
-            }
-        }
         private void MainWindow_OnKeyUp(object sender, KeyEventArgs e)
         {
             switch (e.Key)
@@ -211,6 +219,16 @@ namespace MathSnake
                     else
                         _timer.Start();
                     break;
+            }
+            if (_timer.IsEnabled)
+            {
+                switch (e.Key)
+                {
+                    case Key.Up or Key.W: snake.Direction = MovementDirection.Up; break;
+                    case Key.Down or Key.S: snake.Direction = MovementDirection.Down; break;
+                    case Key.Right or Key.D: snake.Direction = MovementDirection.Right; break;
+                    case Key.Left or Key.A: snake.Direction = MovementDirection.Left; break;
+                }
             }
         }
         private void MainWindow_OnContentRendered(object? sender, EventArgs e)
@@ -238,10 +256,14 @@ namespace MathSnake
         }
         public void SnakeMovement(TileState[,] grid, Snake snake, bool doCollisionCheck = true)
         {
-            SnakePart tail = SnakeParts[0];
-            grid[(int)tail.Coordinates.X, (int)tail.Coordinates.Y] = TileState.Empty;
-            RenderTile(_tiles[(int)tail.Coordinates.X, (int)tail.Coordinates.Y], grid[(int)tail.Coordinates.X, (int)tail.Coordinates.Y]);
-            SnakeParts.RemoveAt(0);
+            while (SnakeParts.Count >= snake.SnakeLength)
+            {
+                SnakePart tail = SnakeParts[0];
+                grid[(int)tail.Coordinates.X, (int)tail.Coordinates.Y] = TileState.Empty;
+                RenderTile(_tiles[(int)tail.Coordinates.X, (int)tail.Coordinates.Y], grid[(int)tail.Coordinates.X, (int)tail.Coordinates.Y]);
+                SnakeParts.RemoveAt(0);
+            }
+
             foreach (var Part in SnakeParts)
             {
                 Part.isHead = false;
@@ -272,19 +294,28 @@ namespace MathSnake
                 GameOverHandler();
             }
         }
-
         public void CollisionCheck()
         {
+            int incrementX = 0;
+            int incrementY = 0;
+            switch (snake.Direction)
+            {
+                case MovementDirection.Up: incrementY--; break;
+                case MovementDirection.Right: incrementX++; break;
+                case MovementDirection.Down: incrementY++; break;
+                case MovementDirection.Left: incrementX--; break;
+            }
             SnakePart head = SnakeParts[SnakeParts.Count - 1];
-            if (head.Coordinates.X >= _tiles.GetLength(0) || head.Coordinates.Y >= _tiles.GetLength(1) || head.Coordinates.X < 0 || head.Coordinates.Y < 0)
-                GameOverHandler();
             foreach (var snakePart in SnakeParts)
             {
                 if (snakePart.Coordinates.X == head.Coordinates.X && snakePart.Coordinates.Y == head.Coordinates.Y && snakePart.isHead == false)
                     GameOverHandler();
             }
+            if (_gameArea[(int)head.Coordinates.X + incrementX, (int)head.Coordinates.Y + incrementY] == TileState.Barrier)
+                GameOverHandler();
+            if (_gameArea[(int)head.Coordinates.X + incrementX, (int)head.Coordinates.Y + incrementY] == TileState.Food)
+                ConsumeFood(foodOnMap);
         }
-
         public void GameOverHandler()
         {
             _timer.Stop();
@@ -299,6 +330,31 @@ namespace MathSnake
             }
             MessageBox.Show("Prohráls lol", "pomoc", MessageBoxButton.OK, MessageBoxImage.Hand);
             this.Close();
+        }
+
+        public void GenerateFood()
+        {
+            Random rnd = new Random();
+            while (true)
+            {
+                int cordX = rnd.Next(_gameSize);
+                int cordY = rnd.Next(_gameSize);
+                if (_gameArea[cordX, cordY] == TileState.Empty)
+                {
+                    foodOnMap = new Food(cordX, cordY);
+                    _gameArea[(int)foodOnMap.Coordinates.X, (int)foodOnMap.Coordinates.Y] = TileState.Food;
+                    RenderTile(_tiles[(int)foodOnMap.Coordinates.X, (int)foodOnMap.Coordinates.Y], TileState.Food);
+                    foodOnMap.IsFoodOnMap = true;
+                    break;
+                }
+            }
+        }
+        public void ConsumeFood(Food food)
+        {
+            foodOnMap.IsFoodOnMap = false;
+            snake.SnakeLength++;
+            RenderTile(_tiles[(int)foodOnMap.Coordinates.X, (int)foodOnMap.Coordinates.Y], _gameArea[(int)foodOnMap.Coordinates.X, (int)foodOnMap.Coordinates.Y]);
+            GenerateFood();
         }
     }
 }
