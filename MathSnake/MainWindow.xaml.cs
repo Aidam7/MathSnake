@@ -330,7 +330,7 @@ namespace MathSnake
                     RenderTile(_tiles[i, j], TileState.GameOver);
                 }
             }
-            MessageBox.Show("Prohráls lol", "pomoc", MessageBoxButton.OK, MessageBoxImage.Hand);
+            MessageBox.Show($"You lost!\nYour score was {score}", "Uh oh", MessageBoxButton.OK, MessageBoxImage.Hand);
             this.Close();
         }
 
