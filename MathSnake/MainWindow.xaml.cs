@@ -32,6 +32,7 @@ namespace MathSnake
         public List<SnakePart> SnakeParts = new List<SnakePart>();
         private DispatcherTimer _timer = new DispatcherTimer();
         private int tickCount = 0;
+        public Random rnd = new Random();
         public MainWindow()
         {
             score = 0;
@@ -55,6 +56,13 @@ namespace MathSnake
             SnakeMovement(_gameArea, snake, false);
             SnakeMovement(_gameArea, snake, false);
             SnakeMovement(_gameArea, snake, false);
+            MessageBox.Show(
+                "Pro začátek hry stiskněte klávesu Enter, jejím zmáčknutím můžete i hru pozastavit\nPohybovat se můžete pomocí šipek či kláves WASD\nSbírejte červená jablka a vyhíbejte se šedým bariérám\n\nGLHF",
+                "", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show(
+                "Dále se ve hře nachází bug, který způsobuje crash při vstupu do hraničních políček, tak se jím prosím vyhýbejte. :)\nUsilovně pracujeme na nápravě.",
+                "Pozor", MessageBoxButton.OK, MessageBoxImage.Error);
+            //GenerateBorderBarriers();
         }
         private void TimerOnTick(object? sender, EventArgs e)
         {
@@ -198,17 +206,6 @@ namespace MathSnake
                 }
             }
         }
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            SnakeMovement(_gameArea, snake);
-            for (int x = 0; x < _gameSize; x++)
-            {
-                for (int y = 0; y < _gameSize; y++)
-                {
-                    RenderTile(_tiles[x, y], _gameArea[x, y]);
-                }
-            }
-        }
         private void MainWindow_OnKeyUp(object sender, KeyEventArgs e)
         {
             switch (e.Key)
@@ -308,6 +305,8 @@ namespace MathSnake
                 case MovementDirection.Left: incrementX--; break;
             }
             SnakePart head = SnakeParts[SnakeParts.Count - 1];
+            if (head.Coordinates.X + incrementX > _gameSize || head.Coordinates.Y + incrementY > _gameSize)
+                GameOverHandler();
             foreach (var snakePart in SnakeParts)
             {
                 if (snakePart.Coordinates.X == head.Coordinates.X && snakePart.Coordinates.Y == head.Coordinates.Y && snakePart.isHead == false)
@@ -336,7 +335,6 @@ namespace MathSnake
 
         public void GenerateFood()
         {
-            Random rnd = new Random();
             while (true)
             {
                 int cordX = rnd.Next(_gameSize);
@@ -354,11 +352,61 @@ namespace MathSnake
         public void ConsumeFood(Food food)
         {
             score++;
+            if (score % 5 == 0)
+                GenerateBarrier();
             Score.Text = $"Score: {score}";
             foodOnMap.IsFoodOnMap = false;
             snake.SnakeLength++;
             RenderTile(_tiles[(int)foodOnMap.Coordinates.X, (int)foodOnMap.Coordinates.Y], _gameArea[(int)foodOnMap.Coordinates.X, (int)foodOnMap.Coordinates.Y]);
             GenerateFood();
         }
+
+        public void GenerateBarrier()
+        {
+            List<BarrierPart> barrierParts = new List<BarrierPart>();
+            Barrier barrier = new Barrier(rnd.Next(1, 6));
+            barrierParts.Add(new BarrierPart(rnd.Next(_gameSize), rnd.Next(_gameSize)));
+            _gameArea[(int)barrierParts[0].Coordinates.X, (int)barrierParts[0].Coordinates.Y] = TileState.Barrier;
+            RenderTile(_tiles[(int)barrierParts[0].Coordinates.X, (int)barrierParts[0].Coordinates.Y], TileState.Barrier);
+            while (barrierParts.Count < barrier.Lenght)
+            {
+                int incrementX = rnd.Next(1);
+                int incrementY = rnd.Next(1);
+                if (_tiles.GetLength(0) > barrierParts[barrierParts.Count - 1].Coordinates.X + incrementX ||
+                    _tiles.GetLength(1) > barrierParts[barrierParts.Count - 1].Coordinates.X + incrementY)
+                {
+                    barrierParts.Add(new BarrierPart((int)barrierParts[barrierParts.Count - 1].Coordinates.X + incrementX, (int)barrierParts[barrierParts.Count - 1].Coordinates.X + incrementY));
+                    _gameArea[(int)barrierParts[barrierParts.Count - 1].Coordinates.X, (int)barrierParts[barrierParts.Count - 1].Coordinates.Y] = TileState.Barrier;
+                    RenderTile(_tiles[(int)barrierParts[barrierParts.Count - 1].Coordinates.X, (int)barrierParts[barrierParts.Count - 1].Coordinates.Y], TileState.Barrier);
+                }
+            }
+        }
+
+        //public void GenerateBorderBarriers()
+        //{
+        //    int x = 0;
+        //    int y = 0;
+        //    for (x = 0; x < _gameSize; x++)
+        //    {
+        //        _gameArea[x, y] = TileState.Barrier;
+        //        RenderTile(_tiles[x,y],TileState.Barrier);
+        //    }
+        //    for (y = 0; y < _gameSize; y++)
+        //    {
+        //        _gameArea[x, y] = TileState.Barrier;
+        //        RenderTile(_tiles[x, y], TileState.Barrier);
+        //    }
+        //    x = 0;
+        //    for (y = 0; y < _gameSize; y++)
+        //    {
+        //        _gameArea[x, y] = TileState.Barrier;
+        //        RenderTile(_tiles[x, y], TileState.Barrier);
+        //    }
+        //    for (x = 0; x < _gameSize; x++)
+        //    {
+        //        _gameArea[x, y] = TileState.Barrier;
+        //        RenderTile(_tiles[x, y], TileState.Barrier);
+        //    }
+        //}
     }
 }
