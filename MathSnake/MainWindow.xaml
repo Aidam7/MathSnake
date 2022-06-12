@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MathSnake"
         mc:Ignorable="d"
-        Title="Snake" Height="450" Width="800" KeyUp="MainWindow_OnKeyUp" KeyDown="MainWindow_OnKeyDown" ContentRendered="MainWindow_OnContentRendered">
+        Title="Snake" Height="450" Width="800" KeyUp="MainWindow_OnKeyUp" ContentRendered="MainWindow_OnContentRendered">
     <Grid x:Name="AppGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" x:Name="TopBarArea"/>
@@ -35,7 +35,5 @@
         </Grid>
         <!--GAME AREA-->
         <Grid x:Name="GameAreaGrid" Grid.Row="1" Grid.Column="1" Margin="15" Background="AliceBlue"/>
-        <Button x:Name="buttonPomoc" Grid.Column="2" Content="Button" HorizontalAlignment="Left" Height="69" Margin="29,42,0,0" Grid.Row="1" VerticalAlignment="Top" Width="120" Click="Button_Click"/>
-        <Label x:Name="pomoc" Grid.Column="2" Content="Label" HorizontalAlignment="Left" Height="75" Margin="29,157,0,0" Grid.Row="1" VerticalAlignment="Top" Width="120"/>
     </Grid>
 </Window>
